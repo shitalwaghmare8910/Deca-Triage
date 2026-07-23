@@ -1,0 +1,7 @@
+# Postgres Agent — relevant deps (pinned from project requirements.txt)
+fastapi==0.111.0
+uvicorn==0.29.0
+python-dotenv==1.0.1
+SQLAlchemy==2.0.30
+cloud-sql-python-connector==1.20.4
+pg8000==1.31.2

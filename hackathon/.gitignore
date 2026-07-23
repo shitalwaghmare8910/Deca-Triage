@@ -1,0 +1,19 @@
+# Environment / secrets
+.env
+*.env
+!*.env.example
+
+# Python virtual environment
+venv/
+.venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Runtime logs and PIDs
+logs/*.log
+logs/*.pid
+logs/*.pids

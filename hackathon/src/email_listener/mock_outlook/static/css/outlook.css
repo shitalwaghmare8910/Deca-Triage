@@ -1,0 +1,147 @@
+/* Mock Outlook — styling loosely modelled on Outlook on the web */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --ol-blue: #0f6cbd;
+    --ol-blue-dark: #115ea3;
+    --ol-bg: #faf9f8;
+    --ol-border: #edebe9;
+    --ol-text: #242424;
+    --ol-muted: #605e5c;
+    --ol-unread: #0f6cbd;
+    --ol-hover: #f3f2f1;
+    --ol-sel: #e1eefb;
+}
+html, body { height: 100%; }
+body {
+    font-family: "Segoe UI", -apple-system, system-ui, sans-serif;
+    color: var(--ol-text);
+    background: var(--ol-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.ol-header {
+    height: 48px;
+    background: var(--ol-blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+}
+.ol-header-left { display: flex; align-items: center; gap: 10px; width: 240px; }
+.ol-waffle { background: none; border: none; color: #fff; cursor: pointer; display: flex; padding: 8px; border-radius: 4px; }
+.ol-waffle:hover { background: rgba(255,255,255,.15); }
+.ol-brand { font-size: 18px; font-weight: 600; }
+.ol-header-center { flex: 1; display: flex; justify-content: center; }
+.ol-search-bar {
+    background: #fff; border-radius: 4px; display: flex; align-items: center;
+    width: 100%; max-width: 560px; height: 32px; padding: 0 10px;
+}
+.ol-search-icon { color: var(--ol-muted); font-size: 20px; }
+.ol-search-input { border: none; outline: none; flex: 1; padding: 0 8px; font-size: 14px; background: transparent; }
+.ol-header-right { display: flex; align-items: center; gap: 6px; width: 240px; justify-content: flex-end; }
+.ol-header-btn { background: none; border: none; color: #fff; cursor: pointer; display: flex; padding: 8px; border-radius: 4px; }
+.ol-header-btn:hover { background: rgba(255,255,255,.15); }
+.ol-user-avatar, .ol-read-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #4f6bed; color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px;
+}
+
+/* Body layout */
+.ol-body { flex: 1; display: flex; min-height: 0; }
+
+/* Sidebar */
+.ol-sidebar { width: 240px; background: var(--ol-bg); border-right: 1px solid var(--ol-border); padding: 12px 8px; flex-shrink: 0; }
+.ol-new-mail {
+    width: 100%; background: #fff; border: 1px solid var(--ol-border); border-radius: 4px;
+    padding: 10px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: var(--ol-blue); margin-bottom: 16px;
+}
+.ol-new-mail:hover { background: var(--ol-hover); }
+.ol-folders { display: flex; flex-direction: column; gap: 2px; }
+.ol-folder {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 4px;
+    text-decoration: none; color: var(--ol-text); font-size: 14px;
+}
+.ol-folder .material-icons-outlined { font-size: 20px; color: var(--ol-muted); }
+.ol-folder:hover { background: var(--ol-hover); }
+.ol-folder.active { background: var(--ol-sel); font-weight: 600; }
+.ol-folder-name { flex: 1; }
+.ol-folder-count { background: var(--ol-blue); color: #fff; border-radius: 10px; font-size: 12px; padding: 1px 8px; min-width: 20px; text-align: center; }
+
+/* Message list pane */
+.ol-list-pane { width: 380px; border-right: 1px solid var(--ol-border); background: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+.ol-list-header { padding: 12px 16px; border-bottom: 1px solid var(--ol-border); display: flex; align-items: center; justify-content: space-between; }
+.ol-list-header h2 { font-size: 18px; font-weight: 600; }
+.ol-list-actions { display: flex; align-items: center; gap: 8px; }
+.ol-icon-btn { background: none; border: none; cursor: pointer; display: flex; padding: 6px; border-radius: 4px; color: var(--ol-muted); }
+.ol-icon-btn:hover { background: var(--ol-hover); }
+.ol-mailbox-label { font-size: 12px; color: var(--ol-muted); }
+.ol-message-list { flex: 1; overflow-y: auto; }
+
+.ol-message {
+    display: flex; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--ol-border);
+    cursor: pointer; border-left: 3px solid transparent; position: relative;
+}
+.ol-message:hover { background: var(--ol-hover); }
+.ol-message.selected { background: var(--ol-sel); border-left-color: var(--ol-blue); }
+.ol-message.unread { border-left-color: var(--ol-unread); }
+.ol-msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: #8a8886; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.ol-msg-main { flex: 1; min-width: 0; }
+.ol-msg-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.ol-msg-from { font-size: 14px; color: var(--ol-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ol-message.unread .ol-msg-from { font-weight: 700; }
+.ol-msg-date { font-size: 12px; color: var(--ol-muted); flex-shrink: 0; }
+.ol-msg-subject { font-size: 13px; color: var(--ol-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ol-message.unread .ol-msg-subject { font-weight: 600; color: var(--ol-blue-dark); }
+.ol-msg-preview { font-size: 12px; color: var(--ol-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ol-msg-delete { position: absolute; right: 8px; bottom: 8px; opacity: 0; }
+.ol-message:hover .ol-msg-delete { opacity: 1; }
+
+/* Reading pane */
+.ol-reading-pane { flex: 1; background: #fff; display: flex; flex-direction: column; min-width: 0; }
+.ol-reading-empty, .ol-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ol-muted); gap: 8px; }
+.ol-reading-empty .material-icons-outlined, .ol-empty .material-icons-outlined { font-size: 56px; opacity: .35; }
+.ol-reading-content { padding: 24px 32px; overflow-y: auto; }
+.ol-read-subject { font-size: 22px; font-weight: 600; margin-bottom: 16px; }
+.ol-read-meta { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--ol-border); margin-bottom: 20px; }
+.ol-read-meta-text { flex: 1; }
+.ol-read-from { font-size: 14px; font-weight: 600; }
+.ol-read-date { font-size: 12px; color: var(--ol-muted); }
+.ol-read-status { font-size: 12px; padding: 3px 10px; border-radius: 12px; background: var(--ol-hover); color: var(--ol-muted); }
+.ol-read-status.unread { background: var(--ol-sel); color: var(--ol-blue-dark); font-weight: 600; }
+.ol-read-status.report { background: #dff6dd; color: #107c10; font-weight: 600; }
+.ol-read-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; color: var(--ol-text); }
+.ol-report-frame { width: 100%; min-height: 70vh; border: 1px solid var(--ol-border); border-radius: 4px; background: #fff; }
+.ol-report-badge { display: inline-block; background: #dff6dd; color: #107c10; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 1px 6px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+
+/* Attachments */
+.ol-msg-clip { font-size: 14px; vertical-align: middle; color: var(--ol-text-muted); margin-right: 3px; }
+.ol-read-attachments { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 14px; }
+.ol-attachment-chip { display: inline-flex; align-items: center; gap: 8px; max-width: 320px; padding: 8px 12px; border: 1px solid var(--ol-border); border-radius: 4px; background: #faf9f8; text-decoration: none; color: var(--ol-text); transition: background .15s; }
+.ol-attachment-chip:hover { background: #f0f0f0; }
+.ol-att-icon { color: #d13438; font-size: 26px; }
+.ol-att-info { display: flex; flex-direction: column; line-height: 1.3; overflow: hidden; }
+.ol-att-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ol-att-meta { font-size: 11px; color: var(--ol-text-muted); }
+.ol-att-dl { font-size: 18px; color: var(--ol-text-muted); margin-left: auto; }
+
+/* Compose modal */
+.ol-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.ol-compose { background: #fff; border-radius: 8px; width: 600px; max-width: 92vw; box-shadow: 0 8px 32px rgba(0,0,0,.24); overflow: hidden; }
+.ol-compose-header { background: var(--ol-blue); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+.ol-compose-header .ol-icon-btn { color: #fff; }
+.ol-compose-form { padding: 16px; }
+.ol-field { margin-bottom: 14px; display: flex; flex-direction: column; gap: 4px; }
+.ol-field label { font-size: 12px; font-weight: 600; color: var(--ol-muted); }
+.ol-field input, .ol-field textarea { border: 1px solid var(--ol-border); border-radius: 4px; padding: 8px 10px; font-size: 14px; font-family: inherit; outline: none; }
+.ol-field input:focus, .ol-field textarea:focus { border-color: var(--ol-blue); }
+.ol-compose-actions { display: flex; align-items: center; gap: 10px; }
+.ol-btn { border: 1px solid var(--ol-border); background: #fff; border-radius: 4px; padding: 8px 16px; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.ol-btn:hover { background: var(--ol-hover); }
+.ol-btn-primary { background: var(--ol-blue); color: #fff; border-color: var(--ol-blue); }
+.ol-btn-primary:hover { background: var(--ol-blue-dark); }
+.ol-btn .material-icons-outlined { font-size: 18px; }
+.ol-compose-msg { font-size: 13px; color: #107c10; }

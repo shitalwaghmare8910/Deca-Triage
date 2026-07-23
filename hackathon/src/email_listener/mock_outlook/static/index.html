@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outlook — Alerts Mailbox</title>
+    <meta name="description" content="Mock Outlook mailbox for demo purposes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="./css/outlook.css">
+</head>
+<body>
+    <!-- Top Banner -->
+    <header class="ol-header">
+        <div class="ol-header-left">
+            <button class="ol-waffle" title="App launcher"><span class="material-icons-outlined">apps</span></button>
+            <span class="ol-brand">Outlook</span>
+        </div>
+        <div class="ol-header-center">
+            <div class="ol-search-bar">
+                <span class="material-icons-outlined ol-search-icon">search</span>
+                <input type="text" class="ol-search-input" id="ol-search" placeholder="Search mail" />
+            </div>
+        </div>
+        <div class="ol-header-right">
+            <button class="ol-header-btn" title="Settings"><span class="material-icons-outlined">settings</span></button>
+            <button class="ol-header-btn" title="Help"><span class="material-icons-outlined">help_outline</span></button>
+            <div class="ol-user-avatar" title="Alerts Mailbox">A</div>
+        </div>
+    </header>
+
+    <div class="ol-body">
+        <!-- Left rail -->
+        <aside class="ol-sidebar">
+            <button class="ol-new-mail" id="btn-new-mail">
+                <span class="material-icons-outlined">edit</span>
+                New alert
+            </button>
+            <nav class="ol-folders">
+                <a class="ol-folder active" href="#">
+                    <span class="material-icons-outlined">inbox</span>
+                    <span class="ol-folder-name">Inbox</span>
+                    <span class="ol-folder-count" id="unread-count">0</span>
+                </a>
+                <a class="ol-folder" href="#"><span class="material-icons-outlined">send</span><span class="ol-folder-name">Sent Items</span></a>
+                <a class="ol-folder" href="#"><span class="material-icons-outlined">drafts</span><span class="ol-folder-name">Drafts</span></a>
+                <a class="ol-folder" href="#"><span class="material-icons-outlined">delete_outline</span><span class="ol-folder-name">Deleted Items</span></a>
+                <a class="ol-folder" href="#"><span class="material-icons-outlined">report_gmailerrorred</span><span class="ol-folder-name">Junk Email</span></a>
+            </nav>
+        </aside>
+
+        <!-- Message list -->
+        <section class="ol-list-pane">
+            <div class="ol-list-header">
+                <h2>Inbox</h2>
+                <div class="ol-list-actions">
+                    <button class="ol-icon-btn" id="btn-refresh" title="Refresh"><span class="material-icons-outlined">refresh</span></button>
+                    <span class="ol-mailbox-label" id="mailbox-label"></span>
+                </div>
+            </div>
+            <div class="ol-message-list" id="message-list">
+                <div class="ol-empty" id="list-empty" style="display:none;">
+                    <span class="material-icons-outlined">mark_email_read</span>
+                    <p>No messages</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reading pane -->
+        <section class="ol-reading-pane" id="reading-pane">
+            <div class="ol-reading-empty" id="reading-empty">
+                <span class="material-icons-outlined">email</span>
+                <p>Select an item to read</p>
+            </div>
+            <article class="ol-reading-content" id="reading-content" style="display:none;">
+                <h1 class="ol-read-subject" id="read-subject"></h1>
+                <div class="ol-read-meta">
+                    <div class="ol-read-avatar" id="read-avatar">M</div>
+                    <div class="ol-read-meta-text">
+                        <div class="ol-read-from" id="read-from"></div>
+                        <div class="ol-read-date" id="read-date"></div>
+                    </div>
+                    <span class="ol-read-status" id="read-status"></span>
+                </div>
+                <div class="ol-read-attachments" id="read-attachments" style="display:none;"></div>
+                <div class="ol-read-body" id="read-body"></div>
+            </article>
+        </section>
+    </div>
+
+    <!-- Compose modal -->
+    <div class="ol-modal-backdrop" id="compose-modal" style="display:none;">
+        <div class="ol-compose">
+            <div class="ol-compose-header">
+                <span>New alert email</span>
+                <button class="ol-icon-btn" id="btn-close-compose" title="Close"><span class="material-icons-outlined">close</span></button>
+            </div>
+            <form class="ol-compose-form" id="compose-form">
+                <div class="ol-field">
+                    <label for="c-from">From</label>
+                    <input type="text" id="c-from" value="monitoring@alerts.local" />
+                </div>
+                <div class="ol-field">
+                    <label for="c-subject">Subject (alert name)</label>
+                    <input type="text" id="c-subject" placeholder="e.g. HighDatabaseConnections" required />
+                </div>
+                <div class="ol-field">
+                    <label for="c-body">Body</label>
+                    <textarea id="c-body" rows="8" placeholder="Optional alert details…"></textarea>
+                </div>
+                <div class="ol-compose-actions">
+                    <button type="submit" class="ol-btn ol-btn-primary"><span class="material-icons-outlined">send</span> Send</button>
+                    <button type="button" class="ol-btn" id="btn-cancel-compose">Discard</button>
+                    <span class="ol-compose-msg" id="compose-msg"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/outlook.js"></script>
+</body>
+</html>

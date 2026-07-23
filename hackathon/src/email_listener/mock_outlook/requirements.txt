@@ -1,0 +1,3 @@
+# Mock Outlook mailbox (Flask) — same pinned versions as the rest of the project.
+Flask==3.0.3
+Flask-Cors==4.0.1

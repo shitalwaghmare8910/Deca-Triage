@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DECA — Decade of Autonomous Triage — Site Reliability Engineering</title>
+    <meta name="description" content="Automating Incident Triage for Alerts">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="css/gps.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- ═══ Header ═══ -->
+    <header class="gps-header">
+        <div class="gps-brand">
+            <div class="gps-logo">
+                <svg viewBox="0 0 40 40" width="36" height="36" aria-label="Deutsche Bank">
+                    <rect x="0" y="0" width="40" height="40" fill="#0018A8"/>
+                    <line x1="9" y1="31" x2="31" y2="9" stroke="#fff" stroke-width="4" stroke-linecap="square"/>
+                </svg>
+            </div>
+            <div class="gps-brand-text">
+                <span class="gps-brand-title">DECA — Decade of Autonomous Triage</span>
+                <span class="gps-brand-sub">SITE RELIABILITY ENGINEERING</span>
+            </div>
+        </div>
+        <div class="gps-header-title">Agentic SRE Intelligence</div>
+        <div class="gps-header-right">
+            <span class="gps-pill" id="gps-date">—</span>
+            <span class="gps-pill" id="gps-clock">00:00:00</span>
+            <span class="gps-status"><span class="dot"></span>IN ACTIVE</span>
+            <button class="gps-btn gps-btn-refresh" id="gps-btn-refresh">Refresh</button>
+            <button class="gps-btn gps-btn-logout" id="gps-btn-logout">Logout</button>
+        </div>
+    </header>
+
+    <!-- ═══ Left sidebar ═══ -->
+    <aside class="gps-sidebar">
+        <nav class="gps-nav">
+            <button class="gps-nav-tab active" data-view="dashboard">
+                <span class="material-icons-outlined">dashboard</span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="gps-nav-tab" data-view="incidents">
+                <span class="material-icons-outlined">report</span>
+                <span class="nav-label">Incidents</span>
+                <span class="nav-badge" id="nav-inc-badge">0</span>
+            </button>
+            <button class="gps-nav-tab" data-view="agent-health">
+                <span class="material-icons-outlined">monitor_heart</span>
+                <span class="nav-label">Agent Health</span>
+            </button>
+            <button class="gps-nav-tab" data-view="analytics">
+                <span class="material-icons-outlined">analytics</span>
+                <span class="nav-label">Analytics</span>
+            </button>
+            <button class="gps-nav-tab" data-view="pipeline">
+                <span class="material-icons-outlined">account_tree</span>
+                <span class="nav-label">Pipeline Workflow</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="gps-main">
+
+        <!-- ═══ DASHBOARD ═══ -->
+        <section class="gps-view active" id="view-dashboard">
+            <div class="view-head">
+                <p class="view-eyebrow">Automating Incident Triage for Alerts</p>
+                <h1 class="view-title">Agentic SRE Intelligence</h1>
+            </div>
+            <div class="grid grid-6">
+                <div class="stat-card accent-blue"><span class="stat-value" id="dash-total">0</span><span class="stat-label">Total Incidents</span><span class="stat-sub">All routes</span></div>
+                <div class="stat-card accent-blue"><span class="stat-value" id="dash-investigating">0</span><span class="stat-label">Investigating</span><span class="stat-sub">In progress</span></div>
+                <div class="stat-card accent-green"><span class="stat-value" id="dash-resolved">0</span><span class="stat-label">Resolved</span><span class="stat-sub" id="dash-resolved-sub">0% rate</span></div>
+                <div class="stat-card accent-red"><span class="stat-value" id="dash-escalated">0</span><span class="stat-label">Escalated</span><span class="stat-sub" id="dash-escalated-sub">0% esc</span></div>
+                <div class="stat-card accent-green"><span class="stat-value" id="dash-auto">0</span><span class="stat-label">Auto-Remediated</span><span class="stat-sub">By AI pipeline</span></div>
+                <div class="stat-card accent-blue"><span class="stat-value" id="dash-avg">0s</span><span class="stat-label">Avg Resolution</span><span class="stat-sub">Mean time to resolve</span></div>
+            </div>
+
+            <div class="grid grid-wide-narrow">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Alert Volume — Last 24 Hours</h3><span class="card-sub">By severity level</span></div>
+                    <div class="chart-box"><canvas id="chart-alert-volume"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Severity Split</h3></div>
+                    <div class="chart-box donut"><canvas id="chart-severity"></canvas></div>
+                    <div class="chart-legend" id="severity-legend"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-wide-narrow">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Recent Incidents</h3><span class="card-sub" id="dash-recent-count">Showing latest 8</span></div>
+                    <table class="gps-table">
+                        <thead><tr><th>ID</th><th>Alert / Service</th><th>Severity</th><th>Status</th><th>AI Decision</th><th>Source</th><th>Time</th></tr></thead>
+                        <tbody id="dash-recent-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Agent Status</h3><span class="card-sub">Real-time pipeline health</span></div>
+                    <div class="agent-status-list" id="dash-agent-status"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-4">
+                <div class="stat-card decision-card accent-green"><span class="stat-value" id="dec-auto-value">0</span><span class="stat-label">Auto-Remediated</span><span class="stat-sub" id="dec-auto-sub">0% of total</span><div class="decision-bar" id="dec-auto-bar"></div></div>
+                <div class="stat-card decision-card accent-red"><span class="stat-value" id="dec-esc-value">0</span><span class="stat-label">Escalated</span><span class="stat-sub" id="dec-esc-sub">0% of total</span><div class="decision-bar" id="dec-esc-bar"></div></div>
+                <div class="stat-card decision-card accent-blue"><span class="stat-value" id="dec-mon-value">0</span><span class="stat-label">Monitoring</span><span class="stat-sub" id="dec-mon-sub">0% of total</span><div class="decision-bar" id="dec-mon-bar"></div></div>
+                <div class="stat-card decision-card accent-gray"><span class="stat-value" id="dec-noaction-value">0</span><span class="stat-label">No Action</span><span class="stat-sub" id="dec-noaction-sub">0% of total</span><div class="decision-bar" id="dec-noaction-bar"></div></div>
+            </div>
+        </section>
+
+        <!-- ═══ INCIDENTS ═══ -->
+        <section class="gps-view" id="view-incidents">
+            <div class="view-head">
+                <p class="view-eyebrow">Automating Incident Triage for Alerts</p>
+                <h1 class="view-title">Incident Feed</h1>
+            </div>
+            <div class="grid grid-5">
+                <div class="stat-card accent-blue"><span class="stat-value" id="inc-total">0</span><span class="stat-label">Total</span></div>
+                <div class="stat-card accent-red"><span class="stat-value" id="inc-critical">0</span><span class="stat-label">Critical</span></div>
+                <div class="stat-card accent-blue"><span class="stat-value" id="inc-investigating">0</span><span class="stat-label">Investigating</span></div>
+                <div class="stat-card accent-red"><span class="stat-value" id="inc-escalated">0</span><span class="stat-label">Escalated</span></div>
+                <div class="stat-card accent-green"><span class="stat-value" id="inc-resolved">0</span><span class="stat-label">Resolved</span></div>
+            </div>
+            <div class="card">
+                <div class="filter-bar">
+                    <span class="filter-label">Severity</span>
+                    <span id="inc-sev-filters">
+                        <button class="filter-btn active" data-sev="all">All</button>
+                        <button class="filter-btn" data-sev="1">Critical</button>
+                        <button class="filter-btn" data-sev="2">High</button>
+                        <button class="filter-btn" data-sev="3">Medium</button>
+                        <button class="filter-btn" data-sev="4">Low</button>
+                        <button class="filter-btn" data-sev="5">Info</button>
+                    </span>
+                    <span class="filter-sep"></span>
+                    <span class="filter-label">Status</span>
+                    <span id="inc-status-filters">
+                        <button class="filter-btn active" data-status="all">All</button>
+                        <button class="filter-btn" data-status="active">Active</button>
+                        <button class="filter-btn" data-status="escalated">Escalated</button>
+                    </span>
+                    <input class="filter-search" id="inc-search" type="text" placeholder="Search by ID, name or service…">
+                </div>
+                <table class="gps-table">
+                    <thead><tr><th>ID</th><th>Alert / Service</th><th>Severity</th><th>Status</th><th>AI Decision</th><th>Source</th><th>Time</th></tr></thead>
+                    <tbody id="inc-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══ AGENT HEALTH ═══ -->
+        <section class="gps-view" id="view-agent-health">
+            <div class="view-head">
+                <p class="view-eyebrow">System Component Status</p>
+                <h1 class="view-title">Agent Health Monitor</h1>
+            </div>
+            <div class="grid grid-3">
+                <div class="stat-card accent-green"><span class="stat-value" id="ah-online">0/0</span><span class="stat-label">Agents Online</span><span class="stat-sub" id="ah-online-sub">—</span></div>
+                <div class="stat-card accent-blue"><span class="stat-value" id="ah-latency">0ms</span><span class="stat-label">Avg Latency</span><span class="stat-sub">Across health checks</span></div>
+                <div class="stat-card accent-blue"><span class="stat-value" id="ah-lastcheck">—</span><span class="stat-label">Last Health Check</span><span class="stat-sub">Auto-refresh every 6s</span></div>
+            </div>
+            <div class="agent-grid" id="agent-grid"></div>
+        </section>
+
+        <!-- ═══ ANALYTICS ═══ -->
+        <section class="gps-view" id="view-analytics">
+            <div class="view-head">
+                <p class="view-eyebrow">Automating Incident Triage for Alerts</p>
+                <h1 class="view-title">Analytics &amp; Reporting</h1>
+            </div>
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Incidents by Service</h3><span class="card-sub">Distribution across applications</span></div>
+                    <div class="chart-box"><canvas id="chart-by-service"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">AI Decision Breakdown</h3></div>
+                    <div class="bar-list" id="analytics-decisions"></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-head"><h3 class="card-title">Hourly Alert Volume</h3><span class="card-sub">Past 24 hours · stacked by severity</span></div>
+                <div class="chart-box tall"><canvas id="chart-hourly"></canvas></div>
+            </div>
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Resolution Rate</h3></div>
+                    <div class="res-rate-big">
+                        <div class="num"><span id="res-rate-num">0</span><small>%</small></div>
+                        <div class="cap">Incidents Resolved</div>
+                        <div class="split"><b id="res-rate-auto" style="color:#16a34a">0</b> Auto-Fixed &nbsp; <b id="res-rate-esc" style="color:#dc2626">0</b> Escalated</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3 class="card-title">Root Cause Frequency</h3></div>
+                    <div class="rootcause-list" id="root-causes"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ PIPELINE WORKFLOW ═══ -->
+        <section class="gps-view" id="view-pipeline">
+            <div class="view-head">
+                <p class="view-eyebrow">Automating Incident Triage for Alerts · Pipeline Workflow</p>
+                <h1 class="view-title">Alert Pipeline Workflow</h1>
+            </div>
+            <div class="pipe-toolbar">
+                <span class="pipe-stat"><span class="dot live"></span><b id="pipe-live">0</b> Live</span>
+                <span class="pipe-stat"><span class="dot complete"></span><b id="pipe-complete">0</b> Complete</span>
+                <span class="pipe-stat"><span class="dot pending"></span><b id="pipe-pending">0</b> Pending</span>
+                <span class="pipe-stat"><span class="dot total"></span><b id="pipe-total">0</b> Total</span>
+                <span class="pipe-stat"><b id="pipe-total-time">—</b></span>
+                <div class="pipe-toolbar-right">
+                    <select class="pipe-select" id="pipe-select"></select>
+                    <button class="btn-trigger" id="btn-pipe-trigger">+ Trigger Alert</button>
+                    <button class="btn-random" id="btn-pipe-random">↻ Random</button>
+                </div>
+            </div>
+
+            <div id="pipe-empty" class="empty-state">
+                <span class="material-icons-outlined">account_tree</span>
+                <h3>No incident selected</h3>
+                <p>Select an incident above, or create one in the ServiceNow portal.</p>
+            </div>
+
+            <div id="pipe-content" style="display:none;">
+                <div class="pipe-inc-bar">
+                    <span class="sev-badge sev-2" id="pipe-inc-sev">HIGH</span>
+                    <div>
+                        <div class="pi-name" id="pipe-inc-name">—</div>
+                        <div class="pi-svc" id="pipe-inc-svc">—</div>
+                    </div>
+                    <span class="pi-meta" id="pipe-inc-meta">—</span>
+                </div>
+                <div class="pipe-tabs">
+                    <button class="pipe-tab active" data-tab="timeline">Timeline</button>
+                    <button class="pipe-tab" data-tab="logs">Execution Logs</button>
+                    <button class="pipe-tab" data-tab="details">Details</button>
+                </div>
+                <div class="pipe-layout">
+                    <div id="pipe-tab-body"></div>
+                    <div>
+                        <div class="panel">
+                            <div class="panel-head green">Step Output <span class="badge" id="pipe-step-badge">—</span></div>
+                            <div class="panel-body" id="pipe-step-body"></div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-head green">Notification &amp; Resolution <span class="badge" id="pipe-notif-badge">—</span></div>
+                            <div class="panel-body" id="pipe-notif-body"></div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-head orange">ServiceNow Ticket Created</div>
+                            <div class="panel-body" id="pipe-ticket-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="gps-toast"></div>
+
+    <!-- ═══ Ask-the-SRE Copilot ═══ -->
+    <button id="copilot-fab" title="Ask the SRE Copilot" aria-label="Ask the SRE Copilot">
+        <span class="material-icons-outlined">smart_toy</span>
+    </button>
+    <div id="copilot-panel" class="copilot-hidden">
+        <div class="copilot-head">
+            <div class="copilot-head-title">
+                <span class="material-icons-outlined">smart_toy</span>
+                <div>
+                    <div class="copilot-title">Ask the SRE</div>
+                    <div class="copilot-sub">Grounded in audit_log · runbooks · incidents</div>
+                </div>
+            </div>
+            <button id="copilot-close" class="copilot-close" aria-label="Close">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+        <div id="copilot-messages" class="copilot-messages"></div>
+        <div class="copilot-suggest" id="copilot-suggest">
+            <button class="copilot-chip">What are the top error codes in the last hour?</button>
+            <button class="copilot-chip">Which credit applications are failing most?</button>
+            <button class="copilot-chip">Is the error rate trending up?</button>
+        </div>
+        <form id="copilot-form" class="copilot-input">
+            <input id="copilot-text" type="text" autocomplete="off"
+                   placeholder="Ask about incidents, errors, runbooks…">
+            <button type="submit" id="copilot-send" aria-label="Send">
+                <span class="material-icons-outlined">send</span>
+            </button>
+        </form>
+    </div>
+
+    <script src="js/gps-core.js"></script>
+    <script src="js/gps-charts.js"></script>
+    <script src="js/gps-dashboard.js"></script>
+    <script src="js/gps-incidents.js"></script>
+    <script src="js/gps-analytics.js"></script>
+    <script src="js/gps-health.js"></script>
+    <script src="js/gps-pipeline.js"></script>
+    <script src="js/gps-copilot.js"></script>
+    <script>
+        // Wire filter + pipeline control listeners (DOM already parsed at this point).
+        if (typeof initIncidentFilters === 'function') initIncidentFilters();
+        if (typeof initPipelineControls === 'function') initPipelineControls();
+    </script>
+</body>
+</html>

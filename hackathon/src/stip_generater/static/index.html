@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceNow — Incident Management</title>
+    <meta name="description" content="Mock ServiceNow Incident Management Portal for demo purposes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="./css/servicenow.css">
+</head>
+<body>
+    <!-- Top Banner -->
+    <header class="sn-header" id="sn-header">
+        <div class="sn-header-left">
+            <button class="sn-hamburger" id="sn-nav-toggle" title="Toggle Navigation">
+                <span class="material-icons-outlined">menu</span>
+            </button>
+            <div class="sn-logo">
+                <svg class="sn-logo-icon" viewBox="0 0 32 32" width="28" height="28">
+                    <circle cx="16" cy="16" r="14" fill="#81B5A1"/>
+                    <path d="M10 16.5C10 13 13 10 16.5 10C18 10 19.5 10.7 20.5 11.7L18.5 13.7C18 13.3 17.3 13 16.5 13C14.6 13 13 14.6 13 16.5C13 18.4 14.6 20 16.5 20C17.8 20 19 19.3 19.5 18.2H16.5V15.5H22.5V16.5C22.5 19.8 19.8 22.5 16.5 22.5C13 22.5 10 19.8 10 16.5Z" fill="white"/>
+                </svg>
+                <span class="sn-logo-text">ServiceNow</span>
+            </div>
+        </div>
+        <div class="sn-header-center">
+            <div class="sn-search-bar">
+                <span class="material-icons-outlined sn-search-icon">search</span>
+                <input type="text" class="sn-search-input" id="sn-global-search" placeholder="Search" />
+            </div>
+        </div>
+        <div class="sn-header-right">
+            <button class="sn-header-btn" title="Help"><span class="material-icons-outlined">help_outline</span></button>
+            <button class="sn-header-btn" title="Settings"><span class="material-icons-outlined">settings</span></button>
+            <button class="sn-header-btn" title="Notifications"><span class="material-icons-outlined">notifications_none</span></button>
+            <div class="sn-user-avatar" title="Admin User">A</div>
+        </div>
+    </header>
+
+    <div class="sn-body">
+        <!-- Left Navigation -->
+        <nav class="sn-sidebar" id="sn-sidebar">
+            <div class="sn-nav-section">
+                <div class="sn-nav-header">
+                    <span class="material-icons-outlined">star_outline</span>
+                    Favorites
+                </div>
+            </div>
+            <div class="sn-nav-section">
+                <div class="sn-nav-header sn-nav-expandable" data-target="nav-incident">
+                    <span class="material-icons-outlined">confirmation_number</span>
+                    Incident
+                    <span class="material-icons-outlined sn-nav-arrow">expand_more</span>
+                </div>
+                <div class="sn-nav-items" id="nav-incident">
+                    <a class="sn-nav-item active" href="#" data-view="new" id="nav-create-new">
+                        <span class="material-icons-outlined">add_circle_outline</span>
+                        Create New
+                    </a>
+                    <a class="sn-nav-item" href="#" data-view="list" id="nav-all-incidents">
+                        <span class="material-icons-outlined">list</span>
+                        All
+                    </a>
+                    <a class="sn-nav-item" href="#" data-view="list" data-filter="my" id="nav-my-incidents">
+                        <span class="material-icons-outlined">person_outline</span>
+                        My Incidents
+                    </a>
+                    <a class="sn-nav-item" href="#" data-view="list" data-filter="open" id="nav-open-incidents">
+                        <span class="material-icons-outlined">pending</span>
+                        Open
+                    </a>
+                    <a class="sn-nav-item" href="#" data-view="list" data-filter="resolved" id="nav-resolved-incidents">
+                        <span class="material-icons-outlined">check_circle_outline</span>
+                        Resolved
+                    </a>
+                </div>
+            </div>
+            <div class="sn-nav-section">
+                <div class="sn-nav-header sn-nav-expandable" data-target="nav-self-service">
+                    <span class="material-icons-outlined">support_agent</span>
+                    Self-Service
+                    <span class="material-icons-outlined sn-nav-arrow">expand_more</span>
+                </div>
+                <div class="sn-nav-items collapsed" id="nav-self-service">
+                    <a class="sn-nav-item" href="#"><span class="material-icons-outlined">dashboard</span> Homepage</a>
+                    <a class="sn-nav-item" href="#"><span class="material-icons-outlined">article</span> Knowledge Base</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="sn-main" id="sn-main">
+            <!-- List View -->
+            <div class="sn-view" id="view-list" style="display: none;">
+                <div class="sn-content-header">
+                    <div class="sn-breadcrumb">
+                        <span>Incident</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                        <span>All</span>
+                    </div>
+                    <h1 class="sn-page-title" id="list-title">Incidents</h1>
+                </div>
+                <div class="sn-list-toolbar">
+                    <button class="sn-btn sn-btn-primary" id="btn-new-incident">
+                        <span class="material-icons-outlined">add</span>
+                        New
+                    </button>
+                    <button class="sn-btn" id="btn-refresh-list">
+                        <span class="material-icons-outlined">refresh</span>
+                    </button>
+                    <div class="sn-filter-bar">
+                        <select class="sn-select" id="filter-state">
+                            <option value="">All States</option>
+                            <option value="1">New</option>
+                            <option value="2">In Progress</option>
+                            <option value="3">On Hold</option>
+                            <option value="6">Resolved</option>
+                            <option value="7">Closed</option>
+                        </select>
+                        <select class="sn-select" id="filter-priority">
+                            <option value="">All Priorities</option>
+                            <option value="1">1 - Critical</option>
+                            <option value="2">2 - High</option>
+                            <option value="3">3 - Medium</option>
+                            <option value="4">4 - Low</option>
+                            <option value="5">5 - Planning</option>
+                        </select>
+                    </div>
+                    <div class="sn-list-count" id="list-count">0 records</div>
+                </div>
+                <div class="sn-table-wrapper">
+                    <table class="sn-table" id="incident-table">
+                        <thead>
+                            <tr>
+                                <th class="sn-th-narrow"><input type="checkbox" id="select-all"></th>
+                                <th>Number</th>
+                                <th>Priority</th>
+                                <th class="sn-th-wide">Short description</th>
+                                <th>State</th>
+                                <th>Category</th>
+                                <th>Assignment group</th>
+                                <th>Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incident-tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sn-table-footer">
+                    <span id="list-footer-count">Showing 0 of 0</span>
+                </div>
+            </div>
+
+            <!-- Form View -->
+            <div class="sn-view" id="view-form" style="display: none;">
+                <div class="sn-content-header">
+                    <div class="sn-breadcrumb">
+                        <span class="sn-breadcrumb-link" id="form-breadcrumb-back">Incident</span>
+                        <span class="material-icons-outlined">chevron_right</span>
+                        <span id="form-breadcrumb-number">New record</span>
+                    </div>
+                    <div class="sn-form-header-row">
+                        <h1 class="sn-page-title" id="form-title">New Incident</h1>
+                        <div class="sn-form-actions">
+                            <button class="sn-btn sn-btn-primary" id="btn-submit-incident">Submit</button>
+                            <button class="sn-btn" id="btn-update-incident" style="display:none;">Update</button>
+                            <button class="sn-btn sn-btn-secondary" id="btn-back-to-list">
+                                <span class="material-icons-outlined">arrow_back</span>
+                                Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="sn-form" id="incident-form">
+                    <input type="hidden" id="form-sys-id" value="">
+
+                    <!-- Two-column layout -->
+                    <div class="sn-form-grid">
+                        <div class="sn-form-column">
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-number">Number</label>
+                                <input type="text" class="sn-input" id="field-number" readonly placeholder="Auto-generated">
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-caller">Caller</label>
+                                <input type="text" class="sn-input" id="field-caller" value="System" placeholder="Caller">
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-category">Category</label>
+                                <select class="sn-input sn-select-field" id="field-category">
+                                    <option value="">-- None --</option>
+                                    <option value="Software">Software</option>
+                                    <option value="Hardware">Hardware</option>
+                                    <option value="Network">Network</option>
+                                    <option value="Database">Database</option>
+                                    <option value="Infrastructure">Infrastructure</option>
+                                    <option value="Application">Application</option>
+                                    <option value="Security">Security</option>
+                                </select>
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-subcategory">Subcategory</label>
+                                <input type="text" class="sn-input" id="field-subcategory" placeholder="Subcategory">
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-service">Business Service</label>
+                                <input type="text" class="sn-input" id="field-service" placeholder="Service">
+                            </div>
+                        </div>
+
+                        <div class="sn-form-column">
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-state">State</label>
+                                <select class="sn-input sn-select-field" id="field-state">
+                                    <option value="1">New</option>
+                                    <option value="2">In Progress</option>
+                                    <option value="3">On Hold</option>
+                                    <option value="6">Resolved</option>
+                                    <option value="7">Closed</option>
+                                </select>
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-impact">Impact</label>
+                                <select class="sn-input sn-select-field" id="field-impact">
+                                    <option value="1">1 - High</option>
+                                    <option value="2" selected>2 - Medium</option>
+                                    <option value="3">3 - Low</option>
+                                </select>
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-urgency">Urgency</label>
+                                <select class="sn-input sn-select-field" id="field-urgency">
+                                    <option value="1">1 - High</option>
+                                    <option value="2" selected>2 - Medium</option>
+                                    <option value="3">3 - Low</option>
+                                </select>
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-priority">Priority</label>
+                                <input type="text" class="sn-input sn-priority-display" id="field-priority" readonly value="3 - Medium">
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-assignment-group">Assignment group</label>
+                                <input type="text" class="sn-input" id="field-assignment-group" placeholder="Assignment group">
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-assigned-to">Assigned to</label>
+                                <input type="text" class="sn-input" id="field-assigned-to" placeholder="Assigned to">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full-width fields -->
+                    <div class="sn-form-full">
+                        <div class="sn-form-group">
+                            <label class="sn-label sn-label-required" for="field-short-description">Short description</label>
+                            <input type="text" class="sn-input" id="field-short-description" placeholder="Brief description of the issue" required>
+                        </div>
+                        <div class="sn-form-group">
+                            <label class="sn-label" for="field-description">Description</label>
+                            <textarea class="sn-textarea" id="field-description" rows="5" placeholder="Detailed description of the incident..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Tabs section -->
+                    <div class="sn-form-tabs">
+                        <div class="sn-tab-bar">
+                            <button type="button" class="sn-tab active" data-tab="notes">Notes</button>
+                            <button type="button" class="sn-tab" data-tab="resolution">Resolution Information</button>
+                            <button type="button" class="sn-tab" data-tab="related">Related Records</button>
+                        </div>
+                        <div class="sn-tab-content active" id="tab-notes">
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-work-notes">Work notes</label>
+                                <textarea class="sn-textarea" id="field-work-notes" rows="3" placeholder="Internal work notes..."></textarea>
+                            </div>
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-additional-comments">Additional comments</label>
+                                <textarea class="sn-textarea" id="field-additional-comments" rows="3" placeholder="Comments visible to the caller..."></textarea>
+                            </div>
+                        </div>
+                        <div class="sn-tab-content" id="tab-resolution">
+                            <div class="sn-form-group">
+                                <label class="sn-label" for="field-close-notes">Close notes</label>
+                                <textarea class="sn-textarea" id="field-close-notes" rows="3" placeholder="Resolution details..."></textarea>
+                            </div>
+                        </div>
+                        <div class="sn-tab-content" id="tab-related">
+                            <p class="sn-empty-state">No related records found.</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="sn-toast-container" id="toast-container"></div>
+
+    <script src="./js/servicenow.js"></script>
+</body>
+</html>

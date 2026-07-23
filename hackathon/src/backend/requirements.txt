@@ -1,0 +1,6 @@
+# Backend + Frontend UI (Flask) — relevant deps (pinned from project requirements.txt)
+Flask==3.0.3
+Flask-Cors==4.0.1
+requests==2.34.2
+# HTML -> PDF conversion for the investigation report delivered to the mailbox
+xhtml2pdf==0.2.17

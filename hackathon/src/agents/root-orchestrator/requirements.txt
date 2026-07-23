@@ -1,0 +1,6 @@
+# Root Orchestrator Agent — relevant deps (pinned from project requirements.txt)
+fastapi==0.111.0
+uvicorn==0.29.0
+pydantic==2.14.0a1
+requests==2.34.2
+google-cloud-aiplatform==1.158.0

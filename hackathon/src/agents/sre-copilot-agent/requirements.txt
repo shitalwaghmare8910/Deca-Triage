@@ -1,0 +1,7 @@
+# SRE Copilot Agent — relevant deps (pinned from project requirements.txt)
+fastapi==0.111.0
+uvicorn==0.29.0
+python-dotenv==1.0.1
+requests==2.32.3
+pydantic==2.7.1
+google-cloud-aiplatform==1.158.0

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DECA — Decade of Autonomous Triage — Architecture &amp; Data Flow</title>
+  <style>
+    :root {
+      --db-blue: #0018a8;
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1a2233;
+      --muted: #5b6577;
+      --border: #e2e6ef;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      background: var(--db-blue);
+      color: #fff;
+      padding: 20px 32px;
+    }
+    header h1 { margin: 0; font-size: 20px; font-weight: 600; }
+    header p { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+    .container { max-width: 1200px; margin: 24px auto; padding: 0 24px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--db-blue);
+    }
+    .card .sub { margin: 0 0 16px; font-size: 12px; color: var(--muted); }
+    .mermaid { display: flex; justify-content: center; overflow-x: auto; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DECA — Decade of Autonomous Triage</h1>
+    <p>Agentic SRE Intelligence — Architecture &amp; End-to-End Data Flow</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>End-to-End Data Flow</h2>
+      <p class="sub">Ingress (ServiceNow / Email / Anomaly) → Orchestrator → RAG / SQL / RCA / Gemini → Post-analysis agents → HTML Report + Dashboard (SSE)</p>
+      <pre class="mermaid">
+flowchart TD
+    MB["Shared Mailbox<br/>Microsoft Graph API"]
+    EL["Email Listener :standalone<br/>poll UNREAD, subject = alert"]
+    SN["Mock ServiceNow :5001<br/>incident portal"]
+    L["Listener: poll_servicenow()<br/>inside backend :5000"]
+    DB[("SQLite triage.db")]
+    O["Root Orchestrator :8080<br/>/process-alert"]
+    K["Knowledge Agent :8001<br/>pgvector runbook search"]
+    P["Postgres Agent :8003<br/>Cloud SQL diagnostics"]
+    RCA["RCA Agent :8011<br/>5-Whys root cause"]
+    G["Vertex AI Gemini<br/>Root Cause + Confidence"]
+    C["Critic :8004"]
+    CP["Concept :8005"]
+    J["Jira :8006"]
+    IL["Incident Logger :8007"]
+    N["Notify :8008<br/>renders HTML report"]
+    AN["Anomaly Detection :8009<br/>scans metrics, auto-triggers"]
+    SC["SRE Copilot :8010<br/>grounded Q&amp;A"]
+    OUT["Mock Outlook :5002<br/>report inbox"]
+    RPT[("HTML Investigation Report")]
+    UI["Dashboard UI :5000<br/>SSE stream"]
+
+    MB -->|"GET unread, poll 30s"| EL
+    EL -->|"POST alert_name"| O
+    SN -->|"GET state=1, poll 10s"| L
+    AN -->|"anomaly → POST alert"| L
+    AN --> DB
+    L --> DB
+    L -->|"POST alert_name"| O
+    O -->|"/search"| K
+    O -->|"/execute-query"| P
+    O -->|"/analyze (5-Whys)"| RCA
+    RCA --> G
+    O -->|"fallback inline"| G
+    O --> C
+    O --> CP
+    O --> J
+    O --> IL
+    O --> N
+    N -->|"generate-only"| RPT
+    N -->|"deliver report"| OUT
+    O -->|"final report + report_context"| L
+    L -->|"SSE events"| UI
+    L -->|"PATCH state=2"| SN
+    UI -->|"GET /report.html"| L
+    UI -->|"ask copilot"| SC
+    SC --> DB
+
+    classDef svc fill:#e8edff,stroke:#0018a8,stroke-width:1px,color:#1a2233;
+    classDef store fill:#fff4e0,stroke:#d98a00,stroke-width:1px,color:#1a2233;
+    classDef ai fill:#e6f7ee,stroke:#0a8f4a,stroke-width:1px,color:#1a2233;
+    classDef ext fill:#f3e8ff,stroke:#7c3aed,stroke-width:1px,color:#1a2233;
+    class EL,SN,L,O,K,P,RCA,C,CP,J,IL,N,AN,SC,UI,OUT svc;
+    class DB,RPT store;
+    class G ai;
+    class MB ext;
+      </pre>
+      <div class="legend">
+        <span><span class="dot" style="background:#e8edff;border:1px solid #0018a8;"></span> Service / Agent</span>
+        <span><span class="dot" style="background:#fff4e0;border:1px solid #d98a00;"></span> Data store / Artifact</span>
+        <span><span class="dot" style="background:#e6f7ee;border:1px solid #0a8f4a;"></span> Vertex AI / LLM</span>
+        <span><span class="dot" style="background:#f3e8ff;border:1px solid #7c3aed;"></span> External (Microsoft Graph)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Service &amp; Port Map</h2>
+      <p class="sub">Each box must be launched on its exact port for inter-service URLs to resolve</p>
+      <pre class="mermaid">
+flowchart LR
+    subgraph Ingress
+      MB["Shared Mailbox (MS Graph)"]
+      EL["Email Listener"]
+      SNUI["ServiceNow Portal :5001"]
+      OUT["Mock Outlook :5002"]
+    end
+    subgraph Frontend
+      UI["Dashboard UI :5000"]
+    end
+    subgraph Core
+      BE["Backend Flask :5000<br/>+ /report.html"]
+      ORC["Orchestrator :8080"]
+    end
+    subgraph Agents
+      KA["Knowledge :8001"]
+      PA["Postgres :8003"]
+      CA["Critic :8004"]
+      COA["Concept :8005"]
+      JA["Jira :8006"]
+      ILA["Incident Logger :8007"]
+      NA["Notification :8008"]
+      ANA["Anomaly Detection :8009"]
+      SCA["SRE Copilot :8010"]
+      RCAA["RCA :8011"]
+    end
+    subgraph GCP
+      CS[("Cloud SQL + pgvector")]
+      GCS[("GCS Bucket — PDFs")]
+      VA["Vertex AI Gemini"]
+    end
+
+    MB --> EL
+    EL --> ORC
+    UI --- BE
+    SNUI --- BE
+    UI --> SCA
+    BE --> ORC
+    ORC --> KA & PA & CA & COA & JA & ILA & NA & RCAA
+    ANA --> BE
+    NA --> OUT
+    KA --> CS
+    KA --> GCS
+    PA --> CS
+    RCAA --> VA
+    ORC --> VA
+      </pre>
+    </div>
+  </div>
+
+  <footer>Generated for DECA — Decade of Autonomous Triage (GPS-AI Telda POC) — open this file directly in a browser to view.</footer>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

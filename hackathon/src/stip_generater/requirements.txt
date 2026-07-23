@@ -1,0 +1,3 @@
+# STIP Generator (Flask) — relevant deps (pinned from project requirements.txt)
+Flask==3.0.3
+Flask-Cors==4.0.1

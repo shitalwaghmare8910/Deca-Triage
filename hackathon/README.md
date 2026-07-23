@@ -1,0 +1,1 @@
+#pip install --upgrade langchain-google-vertexai google-cloud-aiplatform
